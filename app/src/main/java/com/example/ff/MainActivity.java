@@ -40,7 +40,11 @@ public class MainActivity extends Activity implements OnClickListener{
 
   //WebView webview = (WebView) findViewById(R.id.webView1);
   webview = (WebView) findViewById(R.id.webView);
-
+  /*
+  webview.clearCache(true);
+  webview.clearFormData();
+  webview.clearHistory();
+   */
 
 
   webview.getSettings().setJavaScriptEnabled(true);
@@ -52,8 +56,50 @@ public class MainActivity extends Activity implements OnClickListener{
   //webview.invalidate();
   webview.loadUrl(url);
 
+  /*
+  private static class MyWebViewClient extends WebViewClient {
+   private boolean receivederror;
+   private boolean timeout;
+   private boolean succeed = false;
+   @Override
+   public void onPageStarted(final WebView view, String url, Bitmap favicon) {
+    super.onPageStarted(view, url, favicon);
+    timeout = false;
+    receivederror = false
+    new Handler(Looper.getMainLooper()).postDelayed(new Runnable(){
+     @Override
+     public void run(){
+      if(!succeed){
+       timeout = true;
+       view.reload();
+      }
+     }
+    },10000); //ã¿ã¤ã ã¢ã¦ã10ç§
+    // èª­ã¿è¾¼ã¿éå§
+   }
+   @Override
+   public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+    super.onReceivedError(view, request, error);
+    Log.d("WebView", "Webview Error");
+    receivederror = true;
+   }
+   @Override
+   public void onPageFinished(WebView view, String url) {
+    super.onPageFinished(view, url);
+    if(timeout || receivederror){
+     Log.d("WebView","Timeout Error");
+    }
+    else{
+     succeed = true;
+     Log.d("WebView","succeeded");
+    }
+    // èª­ã¿è¾¼ã¿çµäº
+   }
+  }
+*/
   webview.setWebViewClient(new WebViewClient() {
    boolean checkOnPageStartedCalled = false;
+   //boolean timeout = true;
 
    @Override
    public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -66,7 +112,14 @@ public class MainActivity extends Activity implements OnClickListener{
      //pdfView.loadUrl(removePdfTopIcon);
      //hideProgress();
     } else {
+        /*
+     try{
+      Thread.sleep(1000);
+     } catch(InterruptedException e){ }
+         */
+
      showPdfFile(url);
+     //webview.loadUrl(url);
     }
    }
 
