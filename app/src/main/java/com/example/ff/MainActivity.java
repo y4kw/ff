@@ -5,6 +5,7 @@ package com.example.ff;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.view.View.OnClickListener;
 import android.text.SpannableStringBuilder;
 import android.webkit.WebViewClient;
+import android.os.*;
 
 //public class MainActivity extends AppCompatActivity {
 public class MainActivity extends Activity implements OnClickListener{
@@ -40,11 +42,10 @@ public class MainActivity extends Activity implements OnClickListener{
 
   //WebView webview = (WebView) findViewById(R.id.webView1);
   webview = (WebView) findViewById(R.id.webView);
-  /*
+
   webview.clearCache(true);
   webview.clearFormData();
   webview.clearHistory();
-   */
 
 
   webview.getSettings().setJavaScriptEnabled(true);
@@ -56,7 +57,7 @@ public class MainActivity extends Activity implements OnClickListener{
   //webview.invalidate();
   webview.loadUrl(url);
 
-  /*
+/*
   private static class MyWebViewClient extends WebViewClient {
    private boolean receivederror;
    private boolean timeout;
@@ -97,10 +98,55 @@ public class MainActivity extends Activity implements OnClickListener{
    }
   }
 */
-  webview.setWebViewClient(new WebViewClient() {
-   boolean checkOnPageStartedCalled = false;
-   //boolean timeout = true;
 
+  webview.setWebViewClient(new WebViewClient() {
+    boolean checkOnPageStartedCalled = false;
+    private boolean receivederror;
+   private boolean timeout = false;
+
+   private boolean succeed = false;
+   @Override
+   public void onPageStarted(final WebView view, String url, Bitmap favicon) {
+    super.onPageStarted(view, url, favicon);
+    //setProgressBarIndeterminateVisibility(true);
+    timeout = false;
+    receivederror = false;
+    new Handler(Looper.getMainLooper()).postDelayed(new Runnable(){
+     @Override
+     public void run(){
+      Log.d("WebViewrun","run");
+      if(!succeed){
+       timeout = true;
+       view.reload();
+      }
+     }
+    },10000); //ã¿ã¤ã ã¢ã¦ã10ç§
+    // èª­ã¿è¾¼ã¿éå§
+   }
+
+  // @Override
+  // public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+  //  super.onReceivedError(view, request, error);
+   // Log.d("WebView", "Webview Error");
+   // receivederror = true;
+   //}
+   @Override
+   public void onPageFinished(WebView view, String url) {
+    super.onPageFinished(view, url);
+
+    if(timeout || receivederror){
+     //Log.d("WebView","Timeout Error");
+    }
+    else{
+     succeed = true;
+     Log.d("WebView","succeeded");
+     //webview.loadUrl(url);
+     showPdfFile(url);
+    }
+    // èª­ã¿è¾¼ã¿çµäº
+   }
+
+/*
    @Override
    public void onPageStarted(WebView view, String url, Bitmap favicon) {
     checkOnPageStartedCalled = true;
@@ -112,17 +158,11 @@ public class MainActivity extends Activity implements OnClickListener{
      //pdfView.loadUrl(removePdfTopIcon);
      //hideProgress();
     } else {
-        /*
-     try{
-      Thread.sleep(1000);
-     } catch(InterruptedException e){ }
-         */
-
      showPdfFile(url);
      //webview.loadUrl(url);
     }
    }
-
+*/
   });
 
  }
@@ -136,6 +176,7 @@ public class MainActivity extends Activity implements OnClickListener{
  }
 
  private void showPdfFile(final String urlString) {
+  Log.d("showPdfFile","Isucceeded");
   //showProgress();
   webview.invalidate();
   webview.getSettings().setJavaScriptEnabled(true);
